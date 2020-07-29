@@ -1,96 +1,84 @@
-import React, { useRef, useEffect, useCallback } from "react";
-import { GoogleMap, Marker } from "@react-google-maps/api";
-import mapStyles from "../data/mapStyles";
+import React, { useRef, useEffect } from "react";
+import { Map, TileLayer, LayersControl, Marker } from "react-leaflet";
+import { Icon } from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { fixIcon } from "../fixLeafletIcon";
+// import useSwr from "swr";
 
-export const Map = ({ question, result, onMapClick, display }) => {
-  const quiz = { lat: +question.lat, lng: +question.lng };
+export const ActualMap = ({ question, result, onMapClick, display }) => {
+  fixIcon();
+
+  const quiz = { lat: parseFloat(question.lat), lng: parseFloat(question.lng) };
   const mapRef = useRef();
+  const { BaseLayer } = LayersControl;
+  const objective = new Icon({
+    iconUrl: "../assets/gps.svg",
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
 
-  const EUROPE_CENTER = {
-    lat: 50.110882,
-    lng: 8.67949,
-  };
+  const EUROPE_CENTER = [58.02956979905358, 10.56937075425759];
 
   useEffect(() => {
-    if (mapRef.current) {
-      if (!display) {
-        panTo(EUROPE_CENTER);
-        setZoom(2);
-      } else {
-        setZoom(6);
-        panTo(quiz);
-      }
+    if (!display) {
+      GoTo(EUROPE_CENTER, 4);
+    } else {
+      GoTo(quiz, 7);
     }
   }, [display]);
 
-  const panTo = (coordinates) => {
-    mapRef.current.panTo(coordinates);
-  };
-  const setZoom = (number) => {
-    mapRef.current.setZoom(number);
+  const GoTo = (coordinates, zoomLevel) => {
+    const { current = {} } = mapRef;
+    const { leafletElement: map } = current;
+    map.flyTo(coordinates, zoomLevel, { duration: 1 });
   };
 
-  const onLoad = useCallback((map) => {
-    mapRef.current = map;
-    panTo(EUROPE_CENTER);
-  }, []);
-
-  const onClick = useCallback((event) => {
-    const coordinates = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-    panTo(coordinates);
+  const onClick = (event) => {
+    const { current = {} } = mapRef;
+    const { leafletElement: map } = current;
+    const coordinates = event.latlng;
+    const zoom = map.getZoom();
+    GoTo(coordinates, zoom);
     onMapClick(coordinates);
-  }, []);
-
-  const CONTAINER_STYLE = {
-    width: "100vmin",
-    height: "100vmin",
   };
 
-  const EUROPE_BOUNDS = {
-    latLngBounds: {
-      north: 71.245198,
-      south: 35.803751,
-      west: -10.754858,
-      east: 31.67442,
-    },
-    strictBounds: false,
-  };
-
-  const OPTIONS = {
-    styles: mapStyles,
-    disableDefaultUI: true,
-    zoomControl: true,
-    gestureHandling: "cooperative",
-    restriction: EUROPE_BOUNDS,
-  };
+  const EUROPE_BOUNDS = [
+    [71.304858, -11.1632],
+    [35.62686, 26.79504],
+  ];
 
   return (
-    <GoogleMap
-      mapContainerStyle={CONTAINER_STYLE}
-      zoom={1.5}
-      options={OPTIONS}
-      onLoad={onLoad}
+    <Map
+      style={{ width: "77vw", height: "70vh" }}
+      ref={mapRef}
+      animate={true}
+      bounds={EUROPE_BOUNDS}
+      center={EUROPE_CENTER}
+      maxZoom={12}
+      maxBoundsViscosity={0.4}
+      zoom={4}
+      zoomSnap={0.1}
+      zoomDelta={0.3}
       onClick={onClick}
     >
-      {display && (
-        <Marker
-          position={quiz}
-          icon={{
-            url: `/gps.svg`,
-            scaledSize: new window.google.maps.Size(20, 20),
-            style: { display: display },
-          }}
-        />
-      )}
-      {Object.keys(result).length > 0 && (
-        <Marker
-          position={result}
-          icon={{
-            url: `/location-pin.svg`,
-            scaledSize: new window.google.maps.Size(20, 30),
-          }}
-        />
-      )}
-    </GoogleMap>
+      <LayersControl>
+        <BaseLayer checked name="Classic Map">
+          <TileLayer
+            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url={`https://api.mapbox.com/styles/v1/${process.env.REACT_APP_MAPSTUDIO_USER}/${process.env.REACT_APP_MAPSTUDIO_ID}/tiles/256/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPSTUDIO_TOKEN}`}
+          />
+        </BaseLayer>
+        <BaseLayer name="NASA Blue Marble">
+          <TileLayer
+            attribution="&copy; NASA Blue Marble, image service by OpenGeo"
+            url="https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default//EPSG3857_500m/{z}/{y}/{x}.jpeg"
+            maxNativeZoom={8}
+          />
+        </BaseLayer>
+      </LayersControl>
+
+      {display && <Marker position={quiz} icon={objective} />}
+      {Object.keys(result).length > 0 && <Marker position={result} />}
+    </Map>
   );
 };

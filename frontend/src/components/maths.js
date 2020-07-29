@@ -1,8 +1,8 @@
 export const haversineDistance = (question, answer) => {
-  const lat1 = +question.lat;
-  const long1 = +question.lng;
-  const lat2 = answer.lat;
-  const long2 = answer.lng;
+  const lat1 = parseFloat(question.lat);
+  const long1 = parseFloat(question.lng);
+  const lat2 = parseFloat(answer.lat);
+  const long2 = parseFloat(answer.lng);
   const distance = (num1, num2) => (Math.PI / 180) * Math.abs(num1 - num2);
   const toRadian = (angle) => (Math.PI / 180) * angle;
   const EARTH_RADIUS_KM = 6371;
@@ -26,6 +26,19 @@ export const haversineDistance = (question, answer) => {
   if (!finalDistance) return 0;
 
   return finalDistance;
+};
+
+export const randomizeOrder = (array) => {
+  let i = array.length;
+  let randomIndex;
+  let temp;
+  while (--i > 0) {
+    randomIndex = Math.floor(Math.random() * (i + 1));
+    temp = array[randomIndex];
+    array[randomIndex] = array[i];
+    array[i] = temp;
+  }
+  console.log(temp, array);
 };
 
 export const randomNumber = (max) => {

@@ -1,0 +1,19 @@
+{
+  "name": "game-of-capitals",
+  "version": "0.1.0",
+  "description": "backend for game-of-capitals",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "test"
+  },
+  "author": "ConradoZA",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
