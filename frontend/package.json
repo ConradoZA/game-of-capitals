@@ -2,7 +2,7 @@
   "name": "game-of-capitals",
   "version": "0.1.0",
   "private": true,
-  "description": "V2 of the game-of-capitals game",
+  "description": "V2 of game-of-capitals, the game where you have to find where are the capitals of the world",
   "author": "ConradoZA",
   "license": "ISC",
   "dependencies": {
@@ -12,8 +12,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-leaflet": "^2.7.0",
-    "react-scripts": "3.4.1",
-    "swr": "^0.2.3"
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

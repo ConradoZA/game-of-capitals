@@ -15,7 +15,7 @@ import { Game } from "./views/Game";
 const App = () => {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mode, setMode] = useState("Europe");
+  const [mode, setMode] = useState(2);
 
   const handleDrawer = () => {
     setMobileOpen(!mobileOpen);

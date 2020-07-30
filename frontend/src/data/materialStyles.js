@@ -37,12 +37,33 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     paddingLeft: theme.spacing(3),
-    paddingTop: theme.spacing(3),
     [theme.breakpoints.down("md")]: {
       padding: 0,
       paddingTop: theme.spacing(2),
       width: "100%",
       margin: "0 auto",
+    },
+  },
+  gameLayout: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingLeft: theme.spacing(1),
+    paddingTop: theme.spacing(3),
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      padding: 0,
+      paddingLeft: 3,
+      paddingTop: theme.spacing(1),
+    },
+  },
+  map: {
+    width: "77vw",
+    height: "74vh",
+    [theme.breakpoints.down("sm")]: {
+      width: "95vw",
+      height: "68vh",
     },
   },
 }));

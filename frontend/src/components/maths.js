@@ -38,7 +38,7 @@ export const randomizeOrder = (array) => {
     array[randomIndex] = array[i];
     array[i] = temp;
   }
-  console.log(temp, array);
+  return array;
 };
 
 export const randomNumber = (max) => {

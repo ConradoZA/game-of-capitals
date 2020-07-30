@@ -1,19 +1,19 @@
 import React from "react";
 import { Paper } from "@material-ui/core";
 
-const Score = ({ successes, points, cityName }) => {
+const Score = ({ successes, points, cityName, cityCountry }) => {
   return (
-    <>
-      <Paper className="paper" variant="outlined">
-        You have to find <b>{cityName}</b>
+    <div className="paper">
+      <Paper variant="outlined">
+        You have to find <b>{cityName}</b>, in <b>{cityCountry}</b>
       </Paper>
-      <Paper className="paper" variant="outlined">
+      <Paper variant="outlined">
         <b>{successes}</b> cities placed
       </Paper>
-      <Paper className="paper" variant="outlined">
+      <Paper variant="outlined">
         <b>{points}</b> kilometers left
       </Paper>
-    </>
+    </div>
   );
 };
 
