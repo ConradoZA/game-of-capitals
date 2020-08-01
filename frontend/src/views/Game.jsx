@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ActualMap } from "../components/Map";
 import Score from "../components/Score";
 import { Modal } from "../components/Modal";
 import { Button, Dialog } from "@material-ui/core";
-import * as africa from "../data/africa.json";
-import * as asia from "../data/asia.json";
-import * as europe from "../data/europe.json";
-import * as northAmerica from "../data/north-america.json";
-import * as oceania from "../data/oceania.json";
-import * as southAmerica from "../data/south-america.json";
-import {
-  haversineDistance,
-  malus,
-  roundNumber,
-  randomizeOrder,
-} from "../components/maths";
+import { haversineDistance, malus, roundNumber } from "../components/maths";
 import { useStyles } from "../data/materialStyles";
+import { selectGame, endGame } from "../components/functions";
 
-export const Game = ({ mode }) => {
+export const Game = ({ continent, difficulty, newGame, reset }) => {
   const [points, setPoints] = useState(1500);
   const [successes, setSuccesses] = useState(0);
   const [question, setQuestion] = useState({});
@@ -33,35 +23,16 @@ export const Game = ({ mode }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    switch (mode) {
-      case 1:
-        mode = africa.default;
-        break;
-      case 2:
-        mode = asia.default;
-        break;
-      case 3:
-        mode = europe.default;
-        break;
-      case 4:
-        mode = northAmerica.default;
-        break;
-      case 5:
-        mode = oceania.default;
-        break;
-      case 6:
-        mode = southAmerica.default;
-        break;
-      default:
-        break;
-    }
-    const randomizedArray = randomizeOrder(mode);
+    const randomizedArray = selectGame(continent);
     setQuestionList(randomizedArray);
-  }, []);
+  }, [newGame]);
 
   useEffect(() => {
-    setMaxI(questionList.length);
-    newQuestion();
+    const quizNumber = questionList.length;
+    if (quizNumber > 0) {
+      setMaxI(quizNumber);
+      newQuestion();
+    }
   }, [questionList]);
 
   useEffect(() => {
@@ -69,21 +40,25 @@ export const Game = ({ mode }) => {
   }, [distance]);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (points !== 1500) {
+    if (maxI > 0) newQuestion();
+  }, [maxI]);
+
+  useEffect(() => {
+    if (maxI > 0) {
+      setTimeout(() => {
         clearTurn();
-        if (points <= 0) {
+        if (endGame(points, maxI, i)) {
           handleShowEnd();
         } else {
           handleShowDistanceModal();
+          newQuestion();
         }
-      }
-      newQuestion();
-    }, 1500);
+      }, 1500);
+    }
   }, [points]);
 
   const newQuestion = () => {
-    if (questionList.length > 0 && i <= maxI) {
+    if (maxI > 0 && i <= maxI) {
       setQuestion({
         cityName: questionList[i]["properties"]["capital"],
         cityCountry: questionList[i]["properties"]["country"],
@@ -107,17 +82,19 @@ export const Game = ({ mode }) => {
     setDisplay(true);
     setSuccesses(successes + 1);
   };
-  const newPoints = () => {
+
+  const newPoints = useCallback(() => {
     const dist = roundNumber(distance);
     const newPoints = malus(points, dist);
     setPoints(newPoints);
-  };
+  }, [distance]);
 
   const onMapClick = (coordinates) => {
     setResult(coordinates);
   };
+
   const onSubmit = () => {
-    updateInfo();
+    if (result.lat) updateInfo();
   };
 
   const clearTurn = () => {
@@ -157,7 +134,9 @@ export const Game = ({ mode }) => {
         result={result}
         onMapClick={onMapClick}
         display={display}
-        mode={mode}
+        continent={continent}
+        reset={reset}
+        newGame={newGame}
       />
       <Button
         style={{ margin: "1rem 0" }}

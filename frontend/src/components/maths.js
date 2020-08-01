@@ -1,8 +1,10 @@
 export const haversineDistance = (question, answer) => {
+  console.log("Calculando: ", question, answer);
   const lat1 = parseFloat(question.lat);
   const long1 = parseFloat(question.lng);
   const lat2 = parseFloat(answer.lat);
   const long2 = parseFloat(answer.lng);
+
   const distance = (num1, num2) => (Math.PI / 180) * Math.abs(num1 - num2);
   const toRadian = (angle) => (Math.PI / 180) * angle;
   const EARTH_RADIUS_KM = 6371;
@@ -18,7 +20,6 @@ export const haversineDistance = (question, answer) => {
     Math.pow(Math.sin(xDistance / 2), 2) *
       Math.cos(latRad1) *
       Math.cos(latRad2);
-
   const c = 2 * Math.asin(Math.sqrt(a));
 
   const finalDistance = EARTH_RADIUS_KM * c;
@@ -39,10 +40,6 @@ export const randomizeOrder = (array) => {
     array[i] = temp;
   }
   return array;
-};
-
-export const randomNumber = (max) => {
-  return Math.floor(Math.random() * max);
 };
 
 export const roundNumber = (number) => {

@@ -50,13 +50,7 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     paddingLeft: theme.spacing(1),
-    paddingTop: theme.spacing(3),
-    [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
-      padding: 0,
-      paddingLeft: 3,
-      paddingTop: theme.spacing(1),
-    },
+    paddingTop: theme.spacing(1.5),
   },
   map: {
     width: "77vw",
@@ -65,5 +59,12 @@ export const useStyles = makeStyles((theme) => ({
       width: "95vw",
       height: "68vh",
     },
+  },
+  formControl: {
+    minWidth: 140,
+  },
+  button: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(10),
   },
 }));
