@@ -3,6 +3,7 @@ export const haversineDistance = (question, answer) => {
   const long1 = parseFloat(question.lng);
   const lat2 = parseFloat(answer.lat);
   const long2 = parseFloat(answer.lng);
+
   const distance = (num1, num2) => (Math.PI / 180) * Math.abs(num1 - num2);
   const toRadian = (angle) => (Math.PI / 180) * angle;
   const EARTH_RADIUS_KM = 6371;
@@ -18,7 +19,6 @@ export const haversineDistance = (question, answer) => {
     Math.pow(Math.sin(xDistance / 2), 2) *
       Math.cos(latRad1) *
       Math.cos(latRad2);
-
   const c = 2 * Math.asin(Math.sqrt(a));
 
   const finalDistance = EARTH_RADIUS_KM * c;
@@ -41,15 +41,27 @@ export const randomizeOrder = (array) => {
   return array;
 };
 
-export const randomNumber = (max) => {
-  return Math.floor(Math.random() * max);
-};
-
 export const roundNumber = (number) => {
   return Math.round(number);
 };
 
-export const malus = (pastPoints, distance) => {
+export const normalPoints = (pastPoints, distance) => {
   const dist = roundNumber(distance);
   return pastPoints - dist;
+};
+
+export const easyPoints = (pastPoints, distance) => {
+  const dist = roundNumber(distance);
+  if (dist < 50) {
+    return pastPoints;
+  }
+  return pastPoints - dist;
+};
+
+export const hardPoints = (pastPoints, distance) => {
+  const dist = roundNumber(distance);
+  if (dist < 50) {
+    return pastPoints - dist;
+  }
+  return pastPoints - dist * 2;
 };

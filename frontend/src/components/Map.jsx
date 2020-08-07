@@ -1,83 +1,62 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { Map, TileLayer, LayersControl, Marker } from "react-leaflet";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { fixIcon } from "../fixLeafletIcon";
-import { useStyles } from "../data/materialStyles";
+import { useStyles } from "../data/extraFunctions/materialStyles";
+import { geoLocations } from "../data/extraFunctions/functions";
 
-export const ActualMap = ({ question, result, onMapClick, display, mode }) => {
+export const ActualMap = ({
+  question,
+  result,
+  onMapClick,
+  displayObjetive,
+  continent,
+  newGame,
+}) => {
   const { BaseLayer } = LayersControl;
   fixIcon();
-  let CENTER;
-  let BOUNDS;
-  switch (mode) {
-    case 1:
-      CENTER = [3.988994, 17.382889];
-      BOUNDS = [
-        [37.897891, -26.806338],
-        [-36.847107, 59.821057],
-      ];
-      break;
-    case 2:
-      CENTER = [35.289383, 87.331111];
-      BOUNDS = [
-        [57.3108, 25.4498],
-        [-13.6132, 149.3178],
-      ];
-      break;
-    case 3:
-      CENTER = [58.02956979905358, 10.56937075425759];
-      BOUNDS = [
-        [71.304858, -25.074016],
-        [33.3561, 88.819],
-      ];
-      break;
-    case 4:
-      // mode = northAmerica.default;
-      break;
-    case 5:
-      CENTER = [-26.606025, 134.506006];
-      BOUNDS = [
-        [10.251037, 110.88713],
-        [-51.2125, 179.21],
-      ];
-      break;
-    case 6:
-      // mode = southAmerica.default;
-      break;
-    default:
-      break;
-  }
+
+  let newLocation = useCallback(geoLocations(continent), [newGame]);
+  let CENTER = newLocation.center;
+  let BOUNDS = newLocation.bounds;
+  const quiz = { lat: parseFloat(question.lat), lng: parseFloat(question.lng) };
+
+  const mapRef = useRef();
+  const getMapRef = () => {
+    const { current = {} } = mapRef;
+    const { leafletElement: map } = current;
+    return map;
+  };
+
   const classes = useStyles();
 
-  const quiz = { lat: parseFloat(question.lat), lng: parseFloat(question.lng) };
-  const mapRef = useRef();
-
   const objective = new Icon({
-    iconUrl: "../assets/gps.png",
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
+    iconUrl: "/gps.svg",
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
   });
 
   useEffect(() => {
-    if (!display) {
-      GoTo(CENTER, 4);
+    newLocation = geoLocations(continent);
+    GoTo(CENTER);
+  }, [newGame]);
+
+  useEffect(() => {
+    if (!displayObjetive) {
+      GoTo(CENTER, 4.3);
     } else {
       GoTo(quiz, 7);
     }
-  }, [display]);
+  }, [displayObjetive]);
 
   const GoTo = (coordinates, zoomLevel) => {
-    const { current = {} } = mapRef;
-    const { leafletElement: map } = current;
-    map.flyTo(coordinates, zoomLevel, { duration: 1 });
+    getMapRef().flyTo(coordinates, zoomLevel, { duration: 1 });
   };
 
   const onClick = (event) => {
-    const { current = {} } = mapRef;
-    const { leafletElement: map } = current;
     const coordinates = event.latlng;
-    const zoom = map.getZoom();
+    const zoom = getMapRef().getZoom();
     GoTo(coordinates, zoom);
     onMapClick(coordinates);
   };
@@ -111,9 +90,7 @@ export const ActualMap = ({ question, result, onMapClick, display, mode }) => {
           />
         </BaseLayer>
       </LayersControl>
-
-      {display && <Marker position={quiz} />}
-      {/* {display && <Marker position={quiz} icon={objective} />} */}
+      {displayObjetive && <Marker position={quiz} icon={objective} />}
       {Object.keys(result).length > 0 && <Marker position={result} />}
     </Map>
   );

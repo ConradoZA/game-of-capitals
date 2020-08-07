@@ -8,17 +8,28 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { useStyles } from "./data/materialStyles";
+import { useStyles } from "./data/extraFunctions/materialStyles";
 import { Drawer as MyDrawer } from "./views/Drawer";
 import { Game } from "./views/Game";
 
 const App = () => {
   const classes = useStyles();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [mode, setMode] = useState(2);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [newGame, setNewGame] = useState(false);
+  const [continent, setContinent] = useState(3);
+  const [difficulty, setDifficulty] = useState("normal");
 
   const handleDrawer = () => {
-    setMobileOpen(!mobileOpen);
+    setDrawerOpen(!drawerOpen);
+  };
+  const handleContinent = (newContinent) => {
+    setContinent(newContinent);
+  };
+  const handleDifficulty = (newDifficulty) => {
+    setDifficulty(newDifficulty);
+  };
+  const reset = () => {
+    setNewGame(!newGame);
   };
 
   return (
@@ -34,7 +45,7 @@ const App = () => {
           >
             <MenuIcon />
           </IconButton>
-          <h2>Game of Capitals</h2>
+          <h2 style={{ marginLeft: "13%" }}>Game of Capitals</h2>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
@@ -42,13 +53,13 @@ const App = () => {
           <Drawer
             variant="temporary"
             anchor="left"
-            open={mobileOpen}
+            open={drawerOpen}
             onClose={handleDrawer}
             classes={{
               paper: classes.drawerPaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              keepMounted: true,
             }}
           >
             <MyDrawer />
@@ -62,13 +73,24 @@ const App = () => {
             variant="permanent"
             open
           >
-            <MyDrawer />
+            <MyDrawer
+              continent={continent}
+              handleContinent={handleContinent}
+              difficulty={difficulty}
+              handleDifficulty={handleDifficulty}
+              reset={reset}
+            />
           </Drawer>
         </Hidden>
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Game mode={mode} />
+        <Game
+          continent={continent}
+          difficulty={difficulty}
+          newGame={newGame}
+          reset={reset}
+        />
       </main>
     </div>
   );
