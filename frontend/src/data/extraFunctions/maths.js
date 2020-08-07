@@ -1,5 +1,4 @@
 export const haversineDistance = (question, answer) => {
-  console.log("Calculando: ", question, answer);
   const lat1 = parseFloat(question.lat);
   const long1 = parseFloat(question.lng);
   const lat2 = parseFloat(answer.lat);
@@ -46,7 +45,23 @@ export const roundNumber = (number) => {
   return Math.round(number);
 };
 
-export const malus = (pastPoints, distance) => {
+export const normalPoints = (pastPoints, distance) => {
   const dist = roundNumber(distance);
   return pastPoints - dist;
+};
+
+export const easyPoints = (pastPoints, distance) => {
+  const dist = roundNumber(distance);
+  if (dist < 50) {
+    return pastPoints;
+  }
+  return pastPoints - dist;
+};
+
+export const hardPoints = (pastPoints, distance) => {
+  const dist = roundNumber(distance);
+  if (dist < 50) {
+    return pastPoints - dist;
+  }
+  return pastPoints - dist * 2;
 };

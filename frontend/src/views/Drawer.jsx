@@ -10,11 +10,10 @@ import {
   InputLabel,
   Button,
 } from "@material-ui/core";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import StarsIcon from "@material-ui/icons/Stars";
 import PublicIcon from "@material-ui/icons/Public";
 import MapIcon from "@material-ui/icons/Map";
-import * as styles from "../data/materialStyles";
+import * as styles from "../data/extraFunctions/materialStyles";
 
 export const Drawer = ({
   continent,
@@ -28,16 +27,18 @@ export const Drawer = ({
     handleContinent(event.target.value);
   };
   const handleChangeDifficulty = (event) => {
-    console.log(event.target.value);
     handleDifficulty(event.target.value);
   };
+
+  const handleHighScore = () => {};
+
   return (
     <div>
       <div className={classes.toolbar} />
       <List>
         <ListItem>
           <ListItemIcon>
-            <PublicIcon />
+            <PublicIcon style={{ color: "#7593f5" }} />
           </ListItemIcon>
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="continent">Game Continent</InputLabel>
@@ -58,7 +59,7 @@ export const Drawer = ({
         </ListItem>
         <ListItem>
           <ListItemIcon>
-            <MapIcon />
+            <MapIcon style={{ color: "#e7ff60" }} />
           </ListItemIcon>
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="difficulty">Game Difficulty</InputLabel>
@@ -77,7 +78,7 @@ export const Drawer = ({
         <Button
           className={classes.button}
           variant="outlined"
-          color="secondary"
+          color="primary"
           onClick={reset}
         >
           Start Again
@@ -85,14 +86,12 @@ export const Drawer = ({
       </List>
       <Divider />
       <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button>
+          <ListItemIcon>
+            <StarsIcon style={{ color: "#da0000" }} />
+          </ListItemIcon>
+          <ListItemText primary="HighScores" />
+        </ListItem>
       </List>
     </div>
   );

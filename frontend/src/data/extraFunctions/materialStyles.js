@@ -65,6 +65,6 @@ export const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(1),
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(6.5),
   },
 }));

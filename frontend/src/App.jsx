@@ -8,7 +8,7 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import { useStyles } from "./data/materialStyles";
+import { useStyles } from "./data/extraFunctions/materialStyles";
 import { Drawer as MyDrawer } from "./views/Drawer";
 import { Game } from "./views/Game";
 
@@ -45,7 +45,7 @@ const App = () => {
           >
             <MenuIcon />
           </IconButton>
-          <h2>Game of Capitals</h2>
+          <h2 style={{ marginLeft: "13%" }}>Game of Capitals</h2>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
