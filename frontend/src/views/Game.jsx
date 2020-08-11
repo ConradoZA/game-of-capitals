@@ -44,7 +44,6 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
   useEffect(() => {
     clearGame();
     initGame();
-    console.log(gameMode.current);
   }, [newGame]);
 
   const initGame = () => {
@@ -81,19 +80,15 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
   };
 
   const newPoints = (minusPoints) => {
-    console.log(gameMode.current);
     let newPoints;
     switch (gameMode.current) {
       case "normal":
-        console.log("normal", points.current);
         newPoints = normalPoints(points.current, minusPoints);
         break;
       case "easy":
-        console.log("easy", points.current);
         newPoints = easyPoints(points.current, minusPoints);
         break;
       case "hard":
-        console.log("hard", points.current);
         newPoints = hardPoints(points.current, minusPoints);
         break;
       default:
@@ -218,6 +213,7 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
       </Dialog>
       <Dialog open={showEndGameModal} onClose={handleHideEnd}>
         <EndGameModal
+          continent={continent}
           successes={successes.current}
           handleHideEnd={handleHideEnd}
         />

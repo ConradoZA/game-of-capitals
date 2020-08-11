@@ -86,7 +86,7 @@ export const Drawer = ({
       </List>
       <Divider />
       <List>
-        <ListItem button>
+        <ListItem button href="highscores">
           <ListItemIcon>
             <StarsIcon style={{ color: "#da0000" }} />
           </ListItemIcon>
