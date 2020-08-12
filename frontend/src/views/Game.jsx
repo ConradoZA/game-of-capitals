@@ -70,8 +70,6 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
 
   const newQuestion = () => {
     if (i.current < maxI.current) {
-      console.log(questionList.current.length);
-      console.log(questionList.current[i.current]);
       setQuestion({
         cityName: questionList.current[i.current]["properties"]["capital"],
         cityCountry: questionList.current[i.current]["properties"]["country"],
@@ -186,6 +184,7 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
       <ActualMap
         question={{ lat: question.current.lat, lng: question.current.lng }}
         result={result.current}
+        setResult={setResult}
         onMapClick={onMapClick}
         displayObjetive={displayObjetive}
         continent={continent}

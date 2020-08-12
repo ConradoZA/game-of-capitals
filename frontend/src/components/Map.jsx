@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from "react";
-import { Map, TileLayer, LayersControl, Marker } from "react-leaflet";
+import { Map, TileLayer, LayersControl, Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { fixIcon } from "../fixLeafletIcon";
@@ -9,6 +9,7 @@ import { geoLocations } from "../data/extraFunctions/functions";
 export const ActualMap = ({
   question,
   result,
+  setResult,
   onMapClick,
   displayObjetive,
   continent,
@@ -23,10 +24,16 @@ export const ActualMap = ({
   const quiz = { lat: parseFloat(question.lat), lng: parseFloat(question.lng) };
 
   const mapRef = useRef();
+  const refMarker = useRef();
   const getMapRef = () => {
     const { current = {} } = mapRef;
     const { leafletElement: map } = current;
     return map;
+  };
+  const getMarkerRef = () => {
+    const { current = {} } = refMarker;
+    const { leafletElement: Marker } = current;
+    return Marker;
   };
 
   const classes = useStyles();
@@ -59,6 +66,12 @@ export const ActualMap = ({
     const zoom = getMapRef().getZoom();
     GoTo(coordinates, zoom);
     onMapClick(coordinates);
+  };
+  const updateResult = () => {
+   const updatedMarker=getMarkerRef()
+    if (updatedMarker!==null) {
+      setResult(updatedMarker.getLatLng());
+    }
   };
 
   return (
@@ -97,7 +110,18 @@ export const ActualMap = ({
         </BaseLayer>
       </LayersControl>
       {displayObjetive && <Marker position={quiz} icon={objective} />}
-      {Object.keys(result).length > 0 && <Marker position={result} />}
+      {Object.keys(result).length > 0 && (
+        <Marker
+          draggable
+          ref={refMarker}
+          ondragend={updateResult}
+          position={result}
+        >
+          <Popup>
+            <span>{result}</span>
+          </Popup>
+        </Marker>
+      )}
     </Map>
   );
 };
