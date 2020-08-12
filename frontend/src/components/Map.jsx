@@ -66,7 +66,7 @@ export const ActualMap = ({
       className={classes.map}
       ref={mapRef}
       animate={true}
-      maxBounds={BOUNDS}
+      // maxBounds={BOUNDS}
       center={CENTER}
       maxZoom={12}
       maxBoundsViscosity={0.5}
@@ -76,6 +76,12 @@ export const ActualMap = ({
       onClick={onClick}
     >
       <LayersControl>
+        <BaseLayer name="EASY Map">
+          <TileLayer
+            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://api.mapbox.com/styles/v1/zaknar/ckdro50ni05yr19uhuurkjxkm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemFrbmFyIiwiYSI6ImNrZDYwbDBlcTBkNG4zMHJhd2k2MDFzdDEifQ.vHMVcC1pxUIB4NrNr2QX6Q"
+          />
+        </BaseLayer>
         <BaseLayer checked name="Classic Map">
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

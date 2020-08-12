@@ -26,7 +26,11 @@ const ScoreController = {
           ],
         },
       });
-      res.send(myScore);
+      if (myScore) {
+        res.send(myScore);
+      } else {
+        res.send({ msg: "not found" });
+      }
     } catch (error) {
       console.error(error);
       res.status(400).send({ msg: error.message });
@@ -35,12 +39,13 @@ const ScoreController = {
 
   async newScore(req, res) {
     try {
+      console.log(req.body.score, req.body.name, req.body.continent);
       if (
         typeof req.body.score !== "number" ||
         typeof req.body.name !== "string" ||
-        typeof req.body.continent !== "number"
+        typeof req.body.continent !== "string"
       )
-        res.status(400).send({ msg: "DataType error" });
+        return res.status(400).send({ msg: "DataType error" });
       const newScore = {
         score: req.body.score,
         username: req.body.name,
@@ -59,7 +64,9 @@ const ScoreController = {
         },
       });
       if (alreadyExists)
-        res.status(409).send("This name already exists in this game continent");
+        return res
+          .status(409)
+          .send("This name already exists in this game continent");
       const newEntry = await Score.create(newScore);
       res.status(201).send(newEntry);
     } catch (error) {
