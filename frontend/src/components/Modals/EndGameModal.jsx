@@ -11,7 +11,12 @@ import {
 import * as styles from "../../data/extraFunctions/materialStyles";
 import { MySnackBar } from "../MySnackBar.jsx";
 
-export const EndGameModal = ({ continent, successes, handleHideEnd }) => {
+export const EndGameModal = ({
+  continent,
+  difficulty,
+  successes,
+  handleHideEnd,
+}) => {
   const [name, setName] = useState("");
   const [msg, setMsg] = useState("");
   const [openSnack, setOpenSnack] = useState(false);
@@ -43,12 +48,12 @@ export const EndGameModal = ({ continent, successes, handleHideEnd }) => {
   };
 
   const onSubmit = () => {
-    fetch(`http://localhost:3001/scores/${continent}/${name}`)
+    fetch(`http://localhost:3001/scores/${continent}/${difficulty}/${name}`)
       .then(async (response) => {
         const jsonResponse = await response.json();
         if (jsonResponse.id) {
           fetch(
-            `http://localhost:3001/scores/${continent}/${name}`,
+            `http://localhost:3001/scores/${continent}/${difficulty}/${name}`,
             fetchOptions("PUT", { score: successes })
           )
             .then((res) => {

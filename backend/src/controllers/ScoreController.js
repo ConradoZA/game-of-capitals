@@ -4,7 +4,18 @@ const { Op } = require("sequelize");
 const ScoreController = {
   async getAll(req, res) {
     try {
-      const allScores = await Score.findAll({});
+      const allScores = await Score.findAll({
+        where: {
+          [Op.and]: [
+            {
+              continent: req.params.continent,
+            },
+            {
+              difficulty: req.params.diff,
+            },
+          ],
+        },
+      });
       res.send(allScores);
     } catch (error) {
       console.error(error);
@@ -23,6 +34,9 @@ const ScoreController = {
             {
               continent: req.params.continent,
             },
+            {
+              difficulty: req.params.diff,
+            },
           ],
         },
       });
@@ -39,17 +53,16 @@ const ScoreController = {
 
   async newScore(req, res) {
     try {
-      console.log(req.body.score, req.body.name, req.body.continent);
       if (
         typeof req.body.score !== "number" ||
-        typeof req.body.name !== "string" ||
-        typeof req.body.continent !== "string"
+        typeof req.body.name !== "string"
       )
         return res.status(400).send({ msg: "DataType error" });
       const newScore = {
         score: req.body.score,
         username: req.body.name,
-        continent: req.body.continent,
+        continent: req.params.continent,
+        difficulty: req.params.diff,
       };
       const alreadyExists = await Score.findOne({
         where: {
@@ -58,7 +71,10 @@ const ScoreController = {
               username: req.body.name,
             },
             {
-              continent: req.body.continent,
+              continent: req.params.continent,
+            },
+            {
+              difficulty: req.params.diff,
             },
           ],
         },
@@ -77,7 +93,7 @@ const ScoreController = {
 
   async updateHighScore(req, res) {
     try {
-      const alreadyExists = await Score.findOne({
+      const oldInput = await Score.findOne({
         where: {
           [Op.and]: [
             {
@@ -86,17 +102,20 @@ const ScoreController = {
             {
               continent: req.params.continent,
             },
+            {
+              difficulty: req.params.diff,
+            },
           ],
         },
       });
 
       if (typeof req.body.score !== "number")
-        res.status(400).send({ msg: "Not a number" });
+        return res.status(400).send({ msg: "Not a number" });
 
-      if (alreadyExists.dataValues.score >= req.body.score)
-        res.status(409).send("The score isn't greater than the one registered");
+      if (oldInput.dataValues.score >= req.body.score)
+        return res.status(409).send("The score isn't greater than the one registered");
 
-      await alreadyExists.update({ score: req.body.score });
+      await oldInput.update({ score: req.body.score });
       res.status(204).send("updated");
     } catch (error) {
       console.error(error);
@@ -107,7 +126,7 @@ const ScoreController = {
   async delete(req, res) {
     try {
       if (req.headers.secret !== "428csuz~_y!xtKu")
-        res
+        return res
           .status(400)
           .send({ msg: "Ah,ah,ahhh... You didn't say the magic word." });
       await Score.destroy({

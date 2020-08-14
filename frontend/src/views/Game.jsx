@@ -20,7 +20,6 @@ import {
 } from "../data/extraFunctions/functions";
 import { useAsyncState } from "../data/extraFunctions/customHooks";
 import { NoInputModal } from "../components/Modals/NoInputModal";
-import { MySnackBar } from "../components/MySnackBar";
 
 export const Game = ({ continent, difficulty, newGame, reset }) => {
   const gameMode = useAsyncState(difficulty, true);
@@ -218,6 +217,7 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
       <Dialog open={showEndGameModal} onClose={handleHideEnd}>
         <EndGameModal
           continent={continent}
+          difficulty={gameMode}
           successes={successes.current}
           handleHideEnd={handleHideEnd}
         />

@@ -28,5 +28,12 @@ const Score = db.define("Score", {
       notEmpty: true,
     },
   },
+  difficulty: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
 });
 module.exports = Score;

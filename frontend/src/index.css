@@ -38,3 +38,13 @@ code {
 .bolder {
   font-weight: 800;
 }
+
+.highscore {
+  width : 60vw;
+  margin: 1rem 20vw;
+}
+
+.select {
+  min-width  : 20vw;
+  margin-left: 1rem;
+}

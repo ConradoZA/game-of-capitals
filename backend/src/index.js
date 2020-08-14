@@ -1,6 +1,5 @@
 const express = require("express");
 require("dotenv").config();
-const path = require("path");
 const scoresRouter = require("./routes/scores");
 
 const app = express();

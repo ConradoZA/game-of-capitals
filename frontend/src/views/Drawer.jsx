@@ -9,11 +9,14 @@ import {
   Select,
   InputLabel,
   Button,
+  Dialog,
 } from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
 import PublicIcon from "@material-ui/icons/Public";
 import MapIcon from "@material-ui/icons/Map";
 import * as styles from "../data/extraFunctions/materialStyles";
+import { useState } from "react";
+import { HighScores } from "./HighScores";
 
 export const Drawer = ({
   continent,
@@ -22,7 +25,10 @@ export const Drawer = ({
   handleDifficulty,
   reset,
 }) => {
+  const [showHighScores, setShowHighScores] = useState(false);
+
   const classes = styles.useStyles();
+
   const handleChangeContinent = (event) => {
     handleContinent(event.target.value);
   };
@@ -30,7 +36,9 @@ export const Drawer = ({
     handleDifficulty(event.target.value);
   };
 
-  const handleHighScore = () => {};
+  const handleHighScores = () => {
+    setShowHighScores(!showHighScores);
+  };
 
   return (
     <div>
@@ -86,13 +94,16 @@ export const Drawer = ({
       </List>
       <Divider />
       <List>
-        <ListItem button href="highscores">
+        <ListItem button onClick={handleHighScores}>
           <ListItemIcon>
             <StarsIcon style={{ color: "#da0000" }} />
           </ListItemIcon>
           <ListItemText primary="HighScores" />
         </ListItem>
       </List>
+      <Dialog fullScreen open={showHighScores}>
+        <HighScores />
+      </Dialog>
     </div>
   );
 };
