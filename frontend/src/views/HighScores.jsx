@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { useAsyncState } from "../data/extraFunctions/customHooks";
 import { MySnackBar } from "../components/MySnackBar";
+import { API_URL } from "../data/api-config";
 
 export const HighScores = () => {
   const [continent, setContinent] = useState("");
@@ -41,7 +42,7 @@ export const HighScores = () => {
   };
 
   const showHighScores = () => {
-    fetch(`http://localhost:3001/scores/${continent}/${difficulty}`)
+    fetch(`${API_URL}/scores/${continent}/${difficulty}`)
       .then(async (response) => {
         const jsonResponse = await response.json();
         if (jsonResponse.length > 0) {

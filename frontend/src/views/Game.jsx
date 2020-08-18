@@ -189,6 +189,7 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
         continent={continent}
         reset={reset}
         newGame={newGame}
+        difficulty={difficulty}
       />
       <Button
         style={{ margin: "1rem 0" }}

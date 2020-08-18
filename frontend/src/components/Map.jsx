@@ -14,9 +14,11 @@ export const ActualMap = ({
   displayObjetive,
   continent,
   newGame,
+  difficulty,
 }) => {
   const { BaseLayer } = LayersControl;
   fixIcon();
+  console.log(difficulty);
 
   let newLocation = useCallback(geoLocations(continent), [newGame]);
   let CENTER = newLocation.center;
@@ -68,8 +70,8 @@ export const ActualMap = ({
     onMapClick(coordinates);
   };
   const updateResult = () => {
-   const updatedMarker=getMarkerRef()
-    if (updatedMarker!==null) {
+    const updatedMarker = getMarkerRef();
+    if (updatedMarker !== null) {
       setResult(updatedMarker.getLatLng());
     }
   };
@@ -88,26 +90,30 @@ export const ActualMap = ({
       zoomDelta={0.3}
       onClick={onClick}
     >
-      <LayersControl>
-        <BaseLayer name="EASY Map">
-          <TileLayer
-            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            url="https://api.mapbox.com/styles/v1/zaknar/ckdro50ni05yr19uhuurkjxkm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemFrbmFyIiwiYSI6ImNrZDYwbDBlcTBkNG4zMHJhd2k2MDFzdDEifQ.vHMVcC1pxUIB4NrNr2QX6Q"
-          />
-        </BaseLayer>
+      <LayersControl hideSingleBase>
+        {difficulty === "easy" && (
+          <BaseLayer name="EASY Map">
+            <TileLayer
+              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://api.mapbox.com/styles/v1/zaknar/ckdro50ni05yr19uhuurkjxkm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemFrbmFyIiwiYSI6ImNrZDYwbDBlcTBkNG4zMHJhd2k2MDFzdDEifQ.vHMVcC1pxUIB4NrNr2QX6Q"
+            />
+          </BaseLayer>
+        )}
         <BaseLayer checked name="Classic Map">
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://api.mapbox.com/styles/v1/zaknar/ckd63bqbe0d251im97xz0vmdo/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemFrbmFyIiwiYSI6ImNrZDYwbDBlcTBkNG4zMHJhd2k2MDFzdDEifQ.vHMVcC1pxUIB4NrNr2QX6Q"
           />
         </BaseLayer>
-        <BaseLayer name="NASA Blue Marble">
-          <TileLayer
-            attribution="&copy; NASA Blue Marble, image service by OpenGeo"
-            url="https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default//EPSG3857_500m/{z}/{y}/{x}.jpeg"
-            maxNativeZoom={8}
-          />
-        </BaseLayer>
+        {difficulty === "hard" && (
+          <BaseLayer name="NASA Blue Marble">
+            <TileLayer
+              attribution="&copy; NASA Blue Marble, image service by OpenGeo"
+              url="https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default//EPSG3857_500m/{z}/{y}/{x}.jpeg"
+              maxNativeZoom={8}
+            />
+          </BaseLayer>
+        )}
       </LayersControl>
       {displayObjetive && <Marker position={quiz} icon={objective} />}
       {Object.keys(result).length > 0 && (

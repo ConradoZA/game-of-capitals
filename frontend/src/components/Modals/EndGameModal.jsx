@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import * as styles from "../../data/extraFunctions/materialStyles";
 import { MySnackBar } from "../MySnackBar.jsx";
+import { API_URL } from "../../data/api-config";
 
 export const EndGameModal = ({
   continent,
@@ -24,6 +25,8 @@ export const EndGameModal = ({
   const classes = styles.useStyles();
 
   if (successes === 0) handleHideEnd();
+  const API_URI_1 = `${API_URL}/scores`;
+  const API_URI_2 = `${API_URI_1}/${continent}/${difficulty}/${name}`;
 
   const changeName = (event) => {
     setName(event.target.value);
@@ -48,14 +51,11 @@ export const EndGameModal = ({
   };
 
   const onSubmit = () => {
-    fetch(`http://localhost:3001/scores/${continent}/${difficulty}/${name}`)
+    fetch(API_URI_2)
       .then(async (response) => {
         const jsonResponse = await response.json();
         if (jsonResponse.id) {
-          fetch(
-            `http://localhost:3001/scores/${continent}/${difficulty}/${name}`,
-            fetchOptions("PUT", { score: successes })
-          )
+          fetch(API_URI_2, fetchOptions("PUT", { score: successes }))
             .then((res) => {
               if (res.status === 409) {
                 showSnack(
@@ -70,7 +70,7 @@ export const EndGameModal = ({
             });
         } else {
           fetch(
-            "http://localhost:3001/scores",
+            API_URI_1,
             fetchOptions("POST", { score: successes, name, continent })
           )
             .then(async (response) => {
