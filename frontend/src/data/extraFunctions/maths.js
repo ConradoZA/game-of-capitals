@@ -41,27 +41,20 @@ export const randomizeOrder = (array) => {
   return array;
 };
 
-export const roundNumber = (number) => {
-  return Math.round(number);
-};
-
 export const normalPoints = (pastPoints, distance) => {
-  const dist = roundNumber(distance);
-  return pastPoints - dist;
+  return pastPoints - distance;
 };
 
 export const easyPoints = (pastPoints, distance) => {
-  const dist = roundNumber(distance);
-  if (dist < 50) {
+  if (distance <= 50) {
     return pastPoints;
   }
-  return pastPoints - dist;
+  return pastPoints - distance;
 };
 
 export const hardPoints = (pastPoints, distance) => {
-  const dist = roundNumber(distance);
-  if (dist < 50) {
-    return pastPoints - dist;
+  if (distance <= 50) {
+    return pastPoints - distance;
   }
-  return pastPoints - dist * 2;
+  return pastPoints - distance * 2;
 };

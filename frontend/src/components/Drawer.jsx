@@ -1,43 +1,38 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import SetupContext from "../context/setup-context";
 import {
   Divider,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   FormControl,
   Select,
   InputLabel,
-  Button,
+  ListItemText,
   Dialog,
 } from "@material-ui/core";
 import StarsIcon from "@material-ui/icons/Stars";
 import PublicIcon from "@material-ui/icons/Public";
 import MapIcon from "@material-ui/icons/Map";
 import * as styles from "../data/extraFunctions/materialStyles";
-import { useState } from "react";
-import { HighScores } from "./HighScores";
+import { HighScores } from "../pages/HighScores";
 
-export const Drawer = ({
-  continent,
-  handleContinent,
-  difficulty,
-  handleDifficulty,
-  reset,
-}) => {
-  const [showHighScores, setShowHighScores] = useState(false);
-
+export const Drawer = () => {
   const classes = styles.useStyles();
 
+  const [highScoresOpen, setHighScoresOpen] = useState(false);
+
+  const {
+    continent,
+    difficulty,
+    setNewContinent,
+    setNewDifficulty,
+  } = useContext(SetupContext);
   const handleChangeContinent = (event) => {
-    handleContinent(event.target.value);
+    setNewContinent(event.target.value);
   };
   const handleChangeDifficulty = (event) => {
-    handleDifficulty(event.target.value);
-  };
-
-  const handleHighScores = () => {
-    setShowHighScores(!showHighScores);
+    setNewDifficulty(event.target.value);
   };
 
   return (
@@ -83,25 +78,27 @@ export const Drawer = ({
             </Select>
           </FormControl>
         </ListItem>
-        <Button
-          className={classes.button}
-          variant="outlined"
-          color="primary"
-          onClick={reset}
-        >
-          Start Again
-        </Button>
       </List>
       <Divider />
       <List>
-        <ListItem button onClick={handleHighScores}>
+        <ListItem
+          button
+          onClick={() => {
+            setHighScoresOpen(true);
+          }}
+        >
           <ListItemIcon>
             <StarsIcon style={{ color: "#da0000" }} />
           </ListItemIcon>
           <ListItemText primary="HighScores" />
         </ListItem>
       </List>
-      <Dialog fullScreen open={showHighScores}>
+      <Dialog
+        open={highScoresOpen}
+        onClose={() => {
+          setHighScoresOpen(false);
+        }}
+      >
         <HighScores />
       </Dialog>
     </div>

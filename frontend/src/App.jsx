@@ -9,27 +9,17 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useStyles } from "./data/extraFunctions/materialStyles";
-import { Drawer as MyDrawer } from "./views/Drawer";
-import { Game } from "./views/Game";
+import { Drawer as ActualDrawer } from "./components/Drawer";
+import { Game } from "./pages/Game";
+import { SetupState } from "./context/SetupState";
+import { QuizState } from "./context/QuizState";
 
 const App = () => {
   const classes = useStyles();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [newGame, setNewGame] = useState(false);
-  const [continent, setContinent] = useState(3);
-  const [difficulty, setDifficulty] = useState("normal");
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const handleDrawer = () => {
     setDrawerOpen(!drawerOpen);
-  };
-  const handleContinent = (newContinent) => {
-    setContinent(newContinent);
-  };
-  const handleDifficulty = (newDifficulty) => {
-    setDifficulty(newDifficulty);
-  };
-  const reset = () => {
-    setNewGame(!newGame);
   };
 
   return (
@@ -48,50 +38,40 @@ const App = () => {
           <h2 style={{ marginLeft: "13%" }}>Game of Capitals</h2>
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer}>
-        <Hidden mdUp implementation="css">
-          <Drawer
-            variant="temporary"
-            anchor="left"
-            open={drawerOpen}
-            onClose={handleDrawer}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true,
-            }}
-          >
-            <MyDrawer />
-          </Drawer>
-        </Hidden>
-        <Hidden smDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            <MyDrawer
-              continent={continent}
-              handleContinent={handleContinent}
-              difficulty={difficulty}
-              handleDifficulty={handleDifficulty}
-              reset={reset}
-            />
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <Game
-          continent={continent}
-          difficulty={difficulty}
-          newGame={newGame}
-          reset={reset}
-        />
-      </main>
+      <SetupState>
+        <QuizState>
+          <nav className={classes.drawer}>
+            <Hidden mdUp implementation="css">
+              <Drawer
+                variant="temporary"
+                anchor="left"
+                open={drawerOpen}
+                onClose={handleDrawer}
+                ModalProps={{
+                  keepMounted: true,
+                }}
+              >
+                <ActualDrawer />
+              </Drawer>
+            </Hidden>
+            <Hidden smDown implementation="css">
+              <Drawer
+                classes={{
+                  paper: classes.drawerPaper,
+                }}
+                variant="permanent"
+                open
+              >
+                <ActualDrawer />
+              </Drawer>
+            </Hidden>
+          </nav>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Game />
+          </main>
+        </QuizState>
+      </SetupState>
     </div>
   );
 };

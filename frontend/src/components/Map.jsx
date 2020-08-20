@@ -1,4 +1,6 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useContext } from "react";
+import SetupContext from "../context/setup-context";
+import QuizContext from "../context/quiz-context";
 import { Map, TileLayer, LayersControl, Marker, Popup } from "react-leaflet";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,34 +8,26 @@ import { fixIcon } from "../fixLeafletIcon";
 import { useStyles } from "../data/extraFunctions/materialStyles";
 import { geoLocations } from "../data/extraFunctions/functions";
 
-export const ActualMap = ({
-  question,
-  result,
-  setResult,
-  onMapClick,
-  displayObjetive,
-  continent,
-  newGame,
-  difficulty,
-}) => {
+export const ActualMap = ({ displayObjetive }) => {
   const { BaseLayer } = LayersControl;
   fixIcon();
-  console.log(difficulty);
 
-  let newLocation = useCallback(geoLocations(continent), [newGame]);
+  const { continent, difficulty } = useContext(SetupContext);
+  const { quizLatLng, userGuess, setNewGuess } = useContext(QuizContext);
+
+  let newLocation = geoLocations(continent);
   let CENTER = newLocation.center;
-  let BOUNDS = newLocation.bounds;
-  const quiz = { lat: parseFloat(question.lat), lng: parseFloat(question.lng) };
 
   const mapRef = useRef();
-  const refMarker = useRef();
   const getMapRef = () => {
     const { current = {} } = mapRef;
     const { leafletElement: map } = current;
     return map;
   };
+
+  const markerRef = useRef();
   const getMarkerRef = () => {
-    const { current = {} } = refMarker;
+    const { current = {} } = markerRef;
     const { leafletElement: Marker } = current;
     return Marker;
   };
@@ -46,33 +40,34 @@ export const ActualMap = ({
     iconAnchor: [15, 15],
   });
 
-  useEffect(() => {
-    newLocation = geoLocations(continent);
-    GoTo(CENTER);
-  }, [newGame]);
+  // useEffect(() => {
+  //   newLocation = geoLocations(continent);
+  //   GoTo(CENTER);
+  // }, [newGame]);
 
   useEffect(() => {
     if (!displayObjetive) {
       GoTo(CENTER, 4.3);
     } else {
-      GoTo(quiz, 7);
+      GoTo(quizLatLng, 7);
     }
   }, [displayObjetive]);
 
   const GoTo = (coordinates, zoomLevel) => {
-    getMapRef().flyTo(coordinates, zoomLevel, { duration: 1 });
+    getMapRef().flyTo(coordinates, zoomLevel, { duration: 1.5 });
   };
 
   const onClick = (event) => {
     const coordinates = event.latlng;
     const zoom = getMapRef().getZoom();
     GoTo(coordinates, zoom);
-    onMapClick(coordinates);
+    setNewGuess(coordinates);
   };
+
   const updateResult = () => {
     const updatedMarker = getMarkerRef();
     if (updatedMarker !== null) {
-      setResult(updatedMarker.getLatLng());
+      setNewGuess(updatedMarker.getLatLng());
     }
   };
 
@@ -81,16 +76,14 @@ export const ActualMap = ({
       className={classes.map}
       ref={mapRef}
       animate={true}
-      // maxBounds={BOUNDS}
       center={CENTER}
-      maxZoom={12}
-      maxBoundsViscosity={0.5}
+      maxZoom={13}
       zoom={4}
       zoomSnap={0.1}
       zoomDelta={0.3}
       onClick={onClick}
     >
-      <LayersControl hideSingleBase>
+      <LayersControl>
         {difficulty === "easy" && (
           <BaseLayer name="EASY Map">
             <TileLayer
@@ -115,16 +108,19 @@ export const ActualMap = ({
           </BaseLayer>
         )}
       </LayersControl>
-      {displayObjetive && <Marker position={quiz} icon={objective} />}
-      {Object.keys(result).length > 0 && (
+      {displayObjetive && <Marker position={quizLatLng} icon={objective} />}
+      {Object.keys(userGuess).length > 0 && (
         <Marker
           draggable
-          ref={refMarker}
+          ref={markerRef}
           ondragend={updateResult}
-          position={result}
+          position={userGuess}
         >
           <Popup>
-            <span>{result}</span>
+            <span>
+              Lat: {+userGuess.lat.toFixed(4)}, Long:{" "}
+              {+userGuess.lng.toFixed(4)}
+            </span>
           </Popup>
         </Marker>
       )}

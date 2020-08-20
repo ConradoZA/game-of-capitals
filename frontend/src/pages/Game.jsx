@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import SetupContext from "../context/setup-context";
+import QuizContext from "../context/quiz-context";
+import { QuizState } from "../context/QuizState";
 import { ActualMap } from "../components/Map";
 import Score from "../components/Score";
 import { MoreThan50Modal } from "../components/Modals/MoreThan50Modal";
@@ -9,7 +12,6 @@ import { Button, Dialog } from "@material-ui/core";
 import {
   haversineDistance,
   normalPoints,
-  roundNumber,
   easyPoints,
   hardPoints,
 } from "../data/extraFunctions/maths";
@@ -21,8 +23,23 @@ import {
 import { useAsyncState } from "../data/extraFunctions/customHooks";
 import { NoInputModal } from "../components/Modals/NoInputModal";
 
-export const Game = ({ continent, difficulty, newGame, reset }) => {
-  const gameMode = useAsyncState(difficulty, true);
+export const Game = () => {
+  const { continent, difficulty } = useContext(SetupContext);
+  const {
+    quizLatLng,
+    userGuess,
+    userHits,
+    userPoints,
+    userQuizDistance,
+    setNewQuizLatLng,
+    setNewCapital,
+    setNewCountry,
+    setNewGuess,
+    setNewHits,
+    setNewPoints,
+    setNewUserQuizDistance,
+  } = useContext(QuizContext);
+
   const [showDistanceModal, setShowDistanceModal] = useState(false);
   const [showEndGameModal, setShowEndGameModal] = useState(false);
   const [showNewGameModal, setShowNewGameModal] = useState(false);
@@ -31,20 +48,15 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
   const [openGameOver, setOpenGameOver] = useState(false);
   const [displayObjetive, setDisplayObjetive] = useState(false);
   const [questionList, setQuestionList] = useAsyncState([]);
-  const [question, setQuestion] = useAsyncState({});
   const [maxI, setMaxI] = useAsyncState(0);
   const [i, setI] = useAsyncState(0);
-  const [result, setResult] = useAsyncState({});
-  const [distance, setDistance] = useAsyncState(0);
-  const [points, setPoints] = useAsyncState(1500);
-  const [successes, setSuccesses] = useAsyncState(0);
 
   const classes = useStyles();
 
   useEffect(() => {
     clearGame();
     initGame();
-  }, [newGame]);
+  }, [continent]);
 
   const initGame = () => {
     const randomizedArray = selectGame(continent);
@@ -55,26 +67,28 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
 
   const clearGame = () => {
     setI(0);
-    setPoints(1500);
-    setSuccesses(0);
-    setQuestion({});
+    setNewPoints(1500);
+    setNewHits(0);
+    setNewQuizLatLng({});
+    setNewCountry("");
+    setNewCapital("");
     setQuestionList([]);
     endOfTurn();
   };
 
   const endOfTurn = () => {
     setDisplayObjetive(false);
-    setResult({});
+    setNewGuess({});
   };
 
   const newQuestion = () => {
     if (i.current < maxI.current) {
-      setQuestion({
-        cityName: questionList.current[i.current]["properties"]["capital"],
-        cityCountry: questionList.current[i.current]["properties"]["country"],
+      setNewQuizLatLng({
         lat: questionList.current[i.current]["geometry"]["coordinates"][1],
         lng: questionList.current[i.current]["geometry"]["coordinates"][0],
       });
+      setNewCountry(questionList.current[i.current]["properties"]["country"]);
+      setNewCapital(questionList.current[i.current]["properties"]["capital"]);
       setI(i.current + 1);
     } else {
       handleShowEnd();
@@ -83,36 +97,35 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
 
   const newPoints = (minusPoints) => {
     let newPoints;
-    switch (gameMode.current) {
+    switch (difficulty) {
       case "normal":
-        newPoints = normalPoints(points.current, minusPoints);
+        newPoints = normalPoints(userPoints.current, minusPoints);
         break;
       case "easy":
-        newPoints = easyPoints(points.current, minusPoints);
+        newPoints = easyPoints(userPoints.current, minusPoints);
         break;
       case "hard":
-        newPoints = hardPoints(points.current, minusPoints);
+        newPoints = hardPoints(userPoints.current, minusPoints);
         break;
       default:
-        newPoints = points.current;
+        newPoints = userPoints.current;
         break;
     }
-    setPoints(newPoints);
+    setNewPoints(newPoints);
   };
 
   const showModal = () => {
     setTimeout(() => {
       endOfTurn();
-      if (endGameConditions(points.current, maxI.current, i)) {
+      if (endGameConditions(userPoints.current, maxI.current, i)) {
         handleShowEnd();
-      } else if (distance.current >= 50) {
+      } else if (userQuizDistance.current > 50) {
         handleShowDistanceModal();
-      } else if (distance.current < 50) {
+      } else if (userQuizDistance.current <= 50) {
         handleShowPointModal();
       }
     }, 1800);
   };
-
   const handleShowDistanceModal = () => {
     setShowDistanceModal(true);
   };
@@ -134,6 +147,13 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
     setShowEndGameModal(false);
     setShowNewGameModal(true);
   };
+  const handleShowNoInput = () => {
+    setShowNoInputModal(true);
+  };
+  const handleHideNoInput = () => {
+    setShowNoInputModal(false);
+  };
+
   const saidYes = () => {
     setShowNewGameModal(false);
     clearGame();
@@ -143,54 +163,26 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
     setShowNewGameModal(false);
     setOpenGameOver(true);
   };
-  const handleShowNoInput = () => {
-    setShowNoInputModal(true);
-  };
-  const handleHideNoInput = () => {
-    setShowNoInputModal(false);
-  };
 
-  const onMapClick = useCallback((coordinates) => {
-    setResult(coordinates);
-  }, []);
-
-  const onSubmit = useCallback(() => {
-    if (result.current.lat) {
-      const realDistance = haversineDistance(
-        { lat: question.current.lat, lng: question.current.lng },
-        { lat: result.current.lat, lng: result.current.lng }
-      );
-      const roundedDistance = roundNumber(realDistance);
-      setDistance(roundedDistance);
+  const onSubmit = () => {
+    if (userGuess.lat) {
+      const realDistance = haversineDistance(quizLatLng, userGuess);
+      const roundedDistance = Math.round(realDistance);
+      setNewUserQuizDistance(roundedDistance);
       newPoints(roundedDistance);
       setDisplayObjetive(true);
       showModal();
-      if (roundedDistance <= 50) setSuccesses(successes.current + 1);
+      if (roundedDistance <= 50) setNewHits(userHits + 1);
     } else {
       handleShowNoInput();
     }
-  }, []);
+  };
 
   return (
     <div className={classes.gameLayout}>
-      <Score
-        successes={successes.current}
-        points={points.current}
-        cityName={question.current.cityName}
-        cityCountry={question.current.cityCountry}
-      />
+      <Score />
       <br />
-      <ActualMap
-        question={{ lat: question.current.lat, lng: question.current.lng }}
-        result={result.current}
-        setResult={setResult}
-        onMapClick={onMapClick}
-        displayObjetive={displayObjetive}
-        continent={continent}
-        reset={reset}
-        newGame={newGame}
-        difficulty={difficulty}
-      />
+      <ActualMap displayObjetive={displayObjetive} />
       <Button
         style={{ margin: "1rem 0" }}
         variant="contained"
@@ -204,31 +196,16 @@ export const Game = ({ continent, difficulty, newGame, reset }) => {
         <NoInputModal />
       </Dialog>
       <Dialog open={showDistanceModal} onClose={handleHideDistance}>
-        <MoreThan50Modal
-          distance={distance.current}
-          cityName={question.current.cityName}
-        />
+        <MoreThan50Modal />
       </Dialog>
       <Dialog open={showPointModal} onClose={handleHidePointModal}>
-        <PointModal
-          distance={distance.current}
-          cityName={question.current.cityName}
-        />
+        <PointModal />
       </Dialog>
       <Dialog open={showEndGameModal} onClose={handleHideEnd}>
-        <EndGameModal
-          continent={continent}
-          difficulty={gameMode}
-          successes={successes.current}
-          handleHideEnd={handleHideEnd}
-        />
+        <EndGameModal handleHideEnd={handleHideEnd} />
       </Dialog>
       <Dialog open={showNewGameModal} onClose={saidNo}>
-        <NewGameModal
-          successes={successes.current}
-          saidNo={saidNo}
-          saidYes={saidYes}
-        />
+        <NewGameModal saidNo={saidNo} saidYes={saidYes} />
       </Dialog>
       <Dialog fullScreen open={openGameOver}>
         <div style={{ margin: "auto auto" }}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   TableContainer,
   Table,
@@ -9,46 +9,46 @@ import {
   FormControl,
   InputLabel,
   TableHead,
-  NativeSelect,
+  Select,
 } from "@material-ui/core";
 import { useAsyncState } from "../data/extraFunctions/customHooks";
 import { MySnackBar } from "../components/MySnackBar";
 import { API_URL } from "../data/api-config";
 
 export const HighScores = () => {
-  const [continent, setContinent] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [data, setData] = useAsyncState([{}]);
+  const [continent, setContinent] = useState(3);
+  const updateContinent = (event) => {
+    setContinent(event.target.value);
+  };
+  const [difficulty, setDifficulty] = useState("normal");
+  const updateDifficulty = (event) => {
+    setDifficulty(event.target.value);
+  };
+
+  const [data, setData] = useAsyncState([]);
+
   const [openSnack, setOpenSnack] = useState(false);
   const [msg, setMsg] = useState("");
-
-  const LOG_ERROR = (error) => {
-    showSnack("There was an error!");
-    console.error(error);
-  };
-  const closeSnack = () => {
-    setOpenSnack(false);
-  };
   const showSnack = (message) => {
     setMsg(message);
     setOpenSnack(true);
   };
-
-  const changeContinent = (event) => {
-    setContinent(event.target.value);
+  const closeSnack = () => {
+    setOpenSnack(false);
   };
-  const changeDifficulty = (event) => {
-    setDifficulty(event.target.value);
+
+  const LOG_ERROR = (error) => {
+    showSnack("There was an error!");
+    console.error(error);
   };
 
   const showHighScores = () => {
     fetch(`${API_URL}/scores/${continent}/${difficulty}`)
       .then(async (response) => {
         const jsonResponse = await response.json();
-        if (jsonResponse.length > 0) {
-          setData(jsonResponse);
-        } else {
-          LOG_ERROR("No data");
+        setData(jsonResponse);
+        if (jsonResponse.length === 0) {
+          showSnack("Nothing to show");
         }
       })
       .catch((error) => LOG_ERROR(error));
@@ -59,10 +59,11 @@ export const HighScores = () => {
       <img src="high_scores.png" alt="high scores" className="highscore" />
       <FormControl style={{ minWidth: "30vw", marginLeft: "1rem" }}>
         <InputLabel htmlFor="continent">Continent</InputLabel>
-        <NativeSelect
+        <Select
+          native
           id="continent"
           value={continent}
-          onChange={changeContinent}
+          onChange={updateContinent}
         >
           <option value=""></option>
           <option value={1}>Africa</option>
@@ -71,20 +72,21 @@ export const HighScores = () => {
           <option value={4}>North America</option>
           <option value={5}>Oceania</option>
           <option value={6}>South America</option>
-        </NativeSelect>
+        </Select>
       </FormControl>
       <FormControl style={{ minWidth: "30vw", marginLeft: "1rem" }}>
         <InputLabel htmlFor="difficulty">Difficulty</InputLabel>
-        <NativeSelect
+        <Select
+          native
           id="difficulty"
           value={difficulty}
-          onChange={changeDifficulty}
+          onChange={updateDifficulty}
         >
           <option value=""></option>
           <option value={"easy"}>Easy</option>
           <option value={"normal"}>Normal</option>
           <option value={"hard"}>Hard</option>
-        </NativeSelect>
+        </Select>
       </FormControl>
       <Button
         variant="outlined"

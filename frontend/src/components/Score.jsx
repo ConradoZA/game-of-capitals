@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import QuizContext from "../context/quiz-context";
 import { Paper } from "@material-ui/core";
 
-const Score = ({ successes, points, cityName, cityCountry }) => {
+const Score = () => {
+  const { quizCapital, quizCountry, userHits, userPoints } = useContext(
+    QuizContext
+  );
+
   return (
     <div className="paper">
       <Paper variant="outlined">
-        You have to find <b>{cityName}</b>, in <b>{cityCountry}</b>
+        You have to find <b>{quizCapital}</b>, in <b>{quizCountry}</b>
       </Paper>
       <Paper variant="outlined">
-        <b>{successes}</b> cities placed
+        <b>{userHits}</b> cities placed
       </Paper>
       <Paper variant="outlined">
-        <b>{points}</b> kilometers left
+        <b>{userPoints.current}</b> kilometers left
       </Paper>
     </div>
   );

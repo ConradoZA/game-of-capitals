@@ -1,7 +1,8 @@
 # Game of Capitals
 
-A technical Skills Test I did on July 25, 2020.
-A simple game where you have to place a mark on the map where you think is one of the capital cities of Europe.
+What happens when you take a simple [skills test](https://github.com/ConradoZA/United-Cuisines-Test) and turn it into a full-fledged web?
+This.
+A simple game where you have to place a mark on the map where you think is one of the capital cities of the world.
 
 - ⚓ [Requires](#user-content-requires)
 - 🏁 [Quick Start](#user-content-quick-start)
@@ -20,14 +21,16 @@ A simple game where you have to place a mark on the map where you think is one o
 Ensure [requirements](#user-content-requires) are met, then execute the following in a terminal.
 
 ```bash
-git clone https://github.com/ConradoZA/United-Cuisines-Test.git
-cd United-Cuisines-Test/
+git clone https://github.com/ConradoZA/game-of-capitals.git
+cd game-of-capitals
+cd frontend
 npm install
-npm start
+cd ..
+cd backend
+npm install
 
 ```
 
-🖊️ Remember to rename the file ".env.example" to ".env.local" and to fill all the variables inside of it.
 For explanation about these steps, continue reading the [next section](#user-content-step-by-step).
 
 ## 🚥 Step by Step
@@ -35,30 +38,42 @@ For explanation about these steps, continue reading the [next section](#user-con
 ### Clone the repository
 
 ```bash
-git clone https://github.com/ConradoZA/United-Cuisines-Test.git
+git clone https://github.com/ConradoZA/game-of-capitals.git
 ```
 
 ### Move into the newly created folder
 
 ```bash
-cd United-Cuisines-Test/
+cd game-of-capitals
 ```
 
-### Install node_modules
+### Move into frontend folder and install node_modules
 
 ```bash
+cd frontend
+npm install
+```
+
+### Move into backend folder and install node_modules
+
+```bash
+cd ..
+cd backend
 npm install
 ```
 
 ### Start the program
 
+For that, you need two terminals: one for the frontend and other for the backend.
+Both are initialized with
+
 ```bash
 npm start
 ```
-
-Your default browser will open a new tab with localhost:3000 URL.
 
 ## 🚀 Try it out
 
 _If you don't want to install the package but still want to try it, you can go to [https://game-of-capitals.herokuapp.com/](https://game-of-capitals.herokuapp.com/)_
 _(Don't panic if it takes time to load)_
+
+## 🎬 Some Examples

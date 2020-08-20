@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import QuizContext from "../../context/quiz-context";
 import {
   Card,
   CardHeader,
@@ -8,13 +9,15 @@ import {
   Divider,
 } from "@material-ui/core";
 
-export const NewGameModal = ({ successes, saidNo, saidYes }) => {
+export const NewGameModal = ({ saidNo, saidYes }) => {
+  const { userHits } = useContext(QuizContext);
+
   return (
     <Card className="flex column transCenter">
       <CardHeader className="bolder" title="Play Again?" />
       <CardContent>
         <Divider />
-        <p>Your game has finished with {successes} points.</p>
+        <p>Your game has finished with {userHits} points.</p>
         <p>Do you want to play again?</p>
       </CardContent>
       <CardActions>
