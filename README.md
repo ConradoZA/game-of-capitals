@@ -78,12 +78,12 @@ _(Don't panic if it takes time to load)_
 
 ## 🎬 Some Examples
 
-<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/allocate-compressed.gif"></p>
 Put a mark where you think there is the capital.
+<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/allocate-compressed.gif"></p>
 <br />
-<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/marker-compressed.gif"></p>
 You can move your mark and even check the coordinates for maximum precision.
+<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/marker-compressed.gif"></p>
 <br />
-<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/difficulties-compressed.gif"></p>
 Different difficulties with different ways of scoring, and different maps adapted to each difficulty.
+<p align="center"><img src="https://github.com/ConradoZA/Readme-assets/blob/master/difficulties-compressed.gif"></p>
 <br />
