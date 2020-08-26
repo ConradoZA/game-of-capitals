@@ -13,7 +13,7 @@ import {
 import * as styles from "../../data/extraFunctions/materialStyles";
 import { MySnackBar } from "../MySnackBar.jsx";
 import { API_URL } from "../../data/api-config";
-import { useAsyncState } from "../../data/extraFunctions/customHooks";
+import { useRefState } from "../../data/extraFunctions/customHooks";
 
 export const EndGameModal = ({ handleHideEnd }) => {
   const { userHits } = useContext(QuizContext);
@@ -21,7 +21,7 @@ export const EndGameModal = ({ handleHideEnd }) => {
 
   const nameRef = useRef();
 
-  const [name, setName] = useAsyncState("");
+  const [name, setName] = useRefState("");
   const [msg, setMsg] = useState("");
   const [openSnack, setOpenSnack] = useState(false);
 

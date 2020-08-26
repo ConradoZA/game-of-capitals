@@ -1,10 +1,6 @@
 import { useState, useRef } from "react";
 
-export const useAsyncState = (
-  value,
-  isProp = false,
-  notRenderIfEqual = true
-) => {
+export const useRefState = (value, notRenderIfEqual = true) => {
   const ref = useRef(value);
   const [, forceRender] = useState(false);
 
@@ -12,13 +8,10 @@ export const useAsyncState = (
     if (notRenderIfEqual && !Object.is(ref.current, newState)) {
       ref.current = newState;
       forceRender((oldState) => !oldState);
+    } else {
+      ref.current = newState;
     }
   };
-
-  if (isProp) {
-    ref.current = value;
-    return ref;
-  }
 
   return [ref, updateState];
 };

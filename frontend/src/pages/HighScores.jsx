@@ -11,7 +11,7 @@ import {
   TableHead,
   Select,
 } from "@material-ui/core";
-import { useAsyncState } from "../data/extraFunctions/customHooks";
+import { useRefState } from "../data/extraFunctions/customHooks";
 import { MySnackBar } from "../components/MySnackBar";
 import { API_URL } from "../data/api-config";
 
@@ -25,7 +25,7 @@ export const HighScores = () => {
     setDifficulty(event.target.value);
   };
 
-  const [data, setData] = useAsyncState([]);
+  const [data, setData] = useRefState([]);
 
   const [openSnack, setOpenSnack] = useState(false);
   const [msg, setMsg] = useState("");
@@ -47,6 +47,7 @@ export const HighScores = () => {
       .then(async (response) => {
         const jsonResponse = await response.json();
         setData(jsonResponse);
+        console.log(jsonResponse, data);
         if (jsonResponse.length === 0) {
           showSnack("Nothing to show");
         }

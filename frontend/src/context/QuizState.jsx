@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import QuizContext from "./quiz-context";
-import { useAsyncState } from "../data/extraFunctions/customHooks";
+import { useRefState } from "../data/extraFunctions/customHooks";
 
 export const QuizState = (props) => {
   const [quizLatLng, setQuizLatLng] = useState({});
@@ -28,12 +28,12 @@ export const QuizState = (props) => {
     setUserHits(newHits);
   };
 
-  const [userPoints, setUserPoints] = useAsyncState(1500);
+  const [userPoints, setUserPoints] = useRefState(1500);
   const changeUserPoints = (newPoints) => {
     setUserPoints(newPoints);
   };
 
-  const [userQuizDistance, setUserQuizDistance] = useAsyncState(0);
+  const [userQuizDistance, setUserQuizDistance] = useRefState(0);
   const changeUserQuizDistance = (newDistance) => {
     setUserQuizDistance(newDistance);
   };

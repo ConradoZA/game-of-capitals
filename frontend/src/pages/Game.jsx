@@ -20,7 +20,7 @@ import {
   selectGame,
   endGameConditions,
 } from "../data/extraFunctions/functions";
-import { useAsyncState } from "../data/extraFunctions/customHooks";
+import { useRefState } from "../data/extraFunctions/customHooks";
 import { NoInputModal } from "../components/Modals/NoInputModal";
 
 export const Game = () => {
@@ -47,9 +47,9 @@ export const Game = () => {
   const [showPointModal, setShowPointModal] = useState(false);
   const [openGameOver, setOpenGameOver] = useState(false);
   const [displayObjetive, setDisplayObjetive] = useState(false);
-  const [questionList, setQuestionList] = useAsyncState([]);
-  const [maxI, setMaxI] = useAsyncState(0);
-  const [i, setI] = useAsyncState(0);
+  const [questionList, setQuestionList] = useRefState([]);
+  const [maxI, setMaxI] = useRefState(0);
+  const [i, setI] = useRefState(0);
 
   const classes = useStyles();
 
